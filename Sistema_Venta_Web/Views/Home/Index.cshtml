@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<section class="content-header">
+    <h1> Inicio <small> Panel de Control  </small></h1>
+    <ol class="breadcrumb"> Control </ol>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-3 col-xs-4">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>Producto</h3>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-fw fa-inbox"></i>
+                </div>
+                <a href="@Url.Action("Index", "Producto")" class="small-box-footer">
+                    Ir a Productos
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-4">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>Ventas</h3>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-bag"></i>
+                </div>
+                <a href="@Url.Action("Index", "Ventas")" class="small-box-footer">
+                    Ir a Ventas
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

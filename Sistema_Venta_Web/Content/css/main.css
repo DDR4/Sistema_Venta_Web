@@ -1,0 +1,258 @@
+
+html,
+body {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    height: 100%;
+    background: #2c486b;
+    /*background-image: url(../img/Logo_SL.jpg);*/
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #333;
+}
+
+textarea {
+    resize: none;
+}
+
+/*** Layout minimal ***/
+.bsp-wrapper {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    height: 100%;
+    background-size: cover;
+}
+
+.bsp-body-wrapper {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    height: 100%;
+}
+
+.bsp-header {
+    height: 50px;
+}
+
+.bsp-content {
+    padding: 15px 0 15px 0;
+    background-color: transparent;
+    height: -o-calc(100% - 90px); /* opera */
+    height: -webkit-calc(100% - 90px); /* google, safari */
+    height: -moz-calc(100% - 90px); /* firefox */
+}
+
+.bsp-footer {
+    text-align: right;
+}
+
+.bsp-footer footer {
+    margin: 10px auto;
+}
+
+/*** Box Login***/
+.bsp-box-login {
+    background-color: #ffffff; /* Para no ocacionar un warining Require fallback colors, por el uso de rbga*/
+    background-color: rgba(255,255,255,0.8);
+}
+
+.bsp-text-danger {
+    color: #bcbcbc;
+}
+
+.bsp-input {
+    width: auto;
+    min-width: 150px;
+}
+
+.bsp-modal .modal-header {
+    background-color: #8c8c8c;
+    color: #ffffff;
+}
+
+/*** Loading ***/
+.bsp-loading {
+    margin: 20% auto;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.bsp-alert-box {
+    border-bottom: 1px solid #EC0000;
+    margin-bottom: 5px;
+}
+
+.bsp-alert {
+    background-color: #EC0000 !important;
+    color: #ffffff;
+}
+
+.bsp-alert-box .input-group-addon,
+.bsp-alert-box .form-control {
+    border: none;
+    border-radius: 0px;
+    font-weight: bold;
+}
+
+/*** Reducir el tamaño de los tabs del menu Metodizar EEFF ***/
+.nav-tabs-custom .nav > li > a {
+    padding: 5px 5px;
+}
+
+/*** Sobrescribir stilos del boostrap ***/
+.modal {
+    overflow: auto;
+}
+
+.table {
+    font-size: 12px;
+}
+
+.dataTables_info {
+    font-size: 12px;
+}
+
+.jumbotron {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    background-color: transparent;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin-bottom: 0px;
+}
+
+.jumbotron h1 {
+    color: red;
+    font-size: 32px;
+    text-shadow: 4px 4px 2px rgba(224, 224, 224, 1);
+}
+
+.table .odd.selected,
+.table .even.selected {
+    background-color: #d10000;
+    color: whitesmoke;
+}
+
+.table .odd.selected .btn-sm,
+.table .even.selected .btn-sm {
+    color: whitesmoke;
+}
+
+.table .input-sm {
+    height: 22px;
+    text-align: right;
+    padding: 2px 10px;
+}
+
+.table .btn-sm {
+    padding: 0px;
+}
+
+label.form-control {
+    font-weight: normal;
+}
+
+/*** Sobreescribir estilos del adminLTE ***/
+.content-wrapper a {
+    color: #333;
+}
+
+.box-header {
+    padding: 5px 10px;
+}
+
+.box-header .box-title {
+    font-size: 16px;
+}
+
+.box-header > .box-tools {
+    top: 1px;
+}
+
+.small-box {
+    width: auto;
+    overflow: hidden;
+}
+
+.small-box p {
+    font-size: 13px;
+}
+
+.small-box h3 {
+    font-size: 16px;
+    white-space: normal;
+}
+
+.small-box .icon {
+    overflow: hidden;
+    font-size: 64px;
+}
+
+td.details-control:before {
+    /*background: url('../img/Details_open.png') no-repeat center center;*/
+    font-family: FontAwesome;
+    content: '\f0fe';
+    cursor: pointer;
+    text-align: center;
+    display: block;
+}
+
+tr.shown td.details-control:before {
+    /*background: url('../img/Details_close.png') no-repeat center center;*/
+    font-family: FontAwesome;
+    content: '\f146';
+    text-align: center;
+    display: block;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-bold {
+    font-weight: 600;
+}
+
+
+.btn-triangulo {
+    width: 0;
+    height: 0;
+    border-left: 100px solid #f0ad4e;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+}
+
+.formula-contenedor {
+    border: 1px solid #888;
+    background: #f7f7f7;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.calculated-background {
+    background-color: #969393;
+    color: white;
+}
+
+.btn-sm-max {
+    padding: 1px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.modal-m {
+    width: 35% !important;
+}

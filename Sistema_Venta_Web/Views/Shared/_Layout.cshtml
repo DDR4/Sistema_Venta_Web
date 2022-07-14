@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>@ViewBag.Title - Sistema de Ventas</title>
+    @*@Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")*@
+
+
+    <link href="~/Content/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/jquery-ui/css/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/ionicons/css/ionicons.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/dataTables/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/dataTables/css/select.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/select2/css/select2.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+
+    <link href="~/Content/lib/adminLTE/css/adminLTE.min.css" rel="stylesheet" />
+    <link href="~/Content/css/_all-skins.css" rel="stylesheet" />
+    <link href="~/Content/css/main.css" rel="stylesheet" />
+
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="@Url.Action("Index", "Home")" class="logo">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini">
+                    SV
+                </span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg">
+                    Sistema Ventas
+                </span>
+            </a>
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!-- Application Name-->
+                <div class="navbar-brand pull-left">
+                    <label class="hidden-xs">
+                        Inicio
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        <small>@ViewBag.Title</small>
+                    </label>
+                </div>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- User Account Menu -->
+                        @{Html.RenderPartial("_LayoutMenuUserAccount");}
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <aside class="main-sidebar">
+                <section class="sidebar" style="height:auto;">
+                    <ul class="sidebar-menu" data-widget="tree">
+                        <li class="header">MENU PRINCIPAL</li>
+                        <li>
+                            <a href="@Url.Action("Index", "Home")">
+                                <i class="fa fa-th"></i> <span>Inicio</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Producto")">
+                                <i class="fa fa-fw fa-inbox"></i> <span>Producto</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Ventas")">
+                                <i class="ion ion-bag"></i> <span>Ventas</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("Index", "Usuario")">
+                                <i class="fa fa-user"></i> <span>Usuario</span>
+                            </a>
+                        </li>
+
+
+                    </ul>
+
+                </section>
+            </aside>
+
+        }
+        else
+        {
+            <aside class="main-sidebar">
+                <!-- sidebar: style can be found in sidebar.less -->
+                <section class="sidebar" style="height:auto;">
+                    <!-- Sidebar Menu -->
+                    <ul class="sidebar-menu" data-widget="tree">
+                        <li class="header">MENU PRINCIPAL</li>
+                        <!-- Optionally, you can add icons to the links -->
+                    </ul>
+                </section>
+            </aside>
+        }
+
+
+
+
+        <div class="content-wrapper" id="mainContent">
+            @RenderBody()
+        </div>
+
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <label>@(string.Format("{0} {1}", "Sistema Ventas", "V1"))</label>
+            </div>
+            @*<label>@AppConfig.ApplicationCopyright</label>*@
+        </footer>
+    </div>
+
+    @{ Html.RenderPartial("_LayoutModals"); }
+
+
+    @*@Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)*@
+
+    <script src="~/Content/lib/jquery/js/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/lib/jquery/js/jquery.validate.min.js"></script>
+    <script src="~/Content/lib/jquery/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Content/lib/jquery-ui/js/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Content/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Content/lib/respond/js/respond.min.js"></script>
+    <script src="~/Content/lib/select2/js/select2.full.min.js"></script>
+    <script src="~/Content/lib/select2/js/es.js"></script>
+    <script src="~/Content/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Content/lib/bootstrap-datepicker/js/bootstrap-datepicker.es.min.js"></script>
+    <script src="~/Content/lib/dataTables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Content/lib/dataTables/js/dataTables.bootstrap.min.js"></script>
+    <script src="~/Content/lib/dataTables/js/dataTables.select.min.js"></script>
+    <script src="~/Content/lib/fastclick/js/fastclick.js"></script>
+    <script src="~/Content/lib/adminLTE/js/adminlte.js"></script>
+    <script src="~/Content/lib/dataTables/js/buttons.html5.min.js"></script>
+    <script src="~/Content/lib/dataTables/js/dataTables.buttons.min.js"></script>
+    <script src="~/Content/lib/dataTables/js/jszip.min.js"></script>
+
+    <script type="text/javascript">
+            var baseSiteUrl = '@Url.Content("~/")';
+    </script>
+    <script src="~/Content/js/app.js"></script>
+    @RenderSection("scripts", required: false)
+
+
+
+</body>
+</html>

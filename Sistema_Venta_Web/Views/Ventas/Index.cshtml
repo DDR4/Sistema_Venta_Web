@@ -1,0 +1,300 @@
+﻿@using Microsoft.AspNet.Identity
+
+@{
+    ViewBag.Title = "Ventas";
+}
+
+
+<section class="content-header">
+    <h1> Ventas <small>   </small></h1>
+    @*<ol class="breadcrumb"> Control </ol>*@
+</section>
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">&nbsp;</h3>
+
+                    <div class="box-tools pull-right">
+
+                        <button class="btn btn-success btn-sm-max" id="btnNuevaVenta"><span class="fa fa-plus-square"></span> Nueva Venta</button>
+
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="box-body ">
+                    <form id="form1">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="cboTipoBusqueda">Tipo b&uacute;squeda</label>
+                                <select class="form-control" style="width:100%;" id="cboTipoBusqueda">
+                                    <option value="0">Todos</option>
+                                    <option value="1">Fecha </option>
+                                </select>
+                            </div>
+                            <div id="tipoFecha" style="display:none;">
+                                <div class="form-group col-md-2">
+                                    <label for="txtFecha">Fecha</label>
+                                    <input type='text' class="form-control" id="txtFecha" readonly />
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-1">
+                                <label for="btnBuscar"><font color="white">_</font></label>
+                                <button type="button" class="btn btn-primary btn-sm" id="btnBuscar">
+                                    <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">&nbsp;</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="box-body ">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <br />
+                            <button type="button" class="btn btn-success btn-sm" id="btnGenerarExcel"><i class="fa  fa-download" aria-hidden="true"></i> Exportar Excel</button>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="txtFechaDesde">Fecha Desde</label>
+                            <input class="form-control input-sm" type="text" id="txtFechaDesde" readonly="readonly" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="txtFechaHasta">Fecha Hasta</label>
+                            <input class="form-control input-sm" type="text" id="txtFechaHasta" readonly="readonly" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table id="tblListadoVentas" class="table table-bordered table-hover dataTable" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th width="20%;">Descripcion</th>
+                                    <th width="12%;">Tipo Venta</th>
+                                    <th width="12%;">Tipo Pago</th>
+                                    <th width="5%;">Cantidad </th>
+                                    <th width="18%;">Precio Producto</th>
+                                    <th width="15%;">Precio Venta</th>
+                                    <th width="5%;">Descuento</th>
+                                    <th width="15%;">Precio Total</th>
+                                    <th width="8%;">Fecha</th>
+                                    <th width="8%;"></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<div class="modal fade" id="modalVentas" tabindex="-1" role="dialog" aria-labelledby="titleModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="titleModalVenta">Agregar Venta</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formModal" class="small">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="txtModalFecha">Fecha</label>
+                                <input class="form-control input-sm" type="text" id="txtModalFecha" disabled="disabled" readonly="readonly" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="txtModalDescripcion">Descripci&oacute;n</label>
+                                <input class="form-control input-sm" type="text" id="txtModalDescripcion" maxlength="250" readonly />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="btnProducto"><font color="white">_</font></label>
+                                <button type="button" class="btn btn-primary btn-sm" id="btnProducto">
+                                    <span class="fa fa-plus-square"></span>&nbsp;&nbsp;Producto
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="cboModalTipoVenta">Tipo Venta</label>
+                                <select class="form-control" style="width:100%;" id="cboModalTipoVenta">
+                                </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="cboModalTipoPago">Tipo Pago</label>
+                                <select class="form-control" style="width:100%;" id="cboModalTipoPago">
+                                    <option value="0">Todos</option>
+                                    <option value="1">Efectivo</option>
+                                    <option value="2">Credito/Tarjeta</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtModalCantidadMaxima">Cantidad Maxima</label>
+                                    <input class="form-control input-sm" type="text" id="txtModalCantidadMaxima" readonly />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="txtModalCantidad">Cantidad</label>
+                                    <input class="form-control input-sm" type="text" id="txtModalCantidad" maxlength="8" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="txtModalPrecioProducto">Precio Producto </label>
+                                <input class="form-control input-sm" type="text" id="txtModalPrecioProducto" maxlength="50" readonly />
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="txtModalPrecioVenta">Precio Venta</label>
+                                <input class="form-control input-sm" type="text" id="txtModalPrecioVenta" maxlength="50" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="txtModalDescuento">Descuento</label>
+                                <input class="form-control input-sm" type="text" id="txtModalDescuento" maxlength="50" readonly />
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="txtModalTotal">Total</label>
+                                <input class="form-control input-sm" type="text" id="txtModalTotal" maxlength="50" readonly />
+                            </div>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" type="button" id="btnSaveVenta">Guardar</button>
+                <button class="btn btn-default btn-sm" type="button" data-dismiss="modal" id="btnCloseEncuesta">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modalProducto" tabindex="-1" role="dialog" aria-labelledby="titleModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="titleModalVenta">Producto</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+
+                    <div class="form-group col-md-3">
+                        <label for="cboTipoBusquedaModal">Tipo b&uacute;squeda</label>
+                        <select class="form-control input-sm" style="width:100%;" id="cboTipoBusquedaModal">
+                            <option value="0">Todos</option>
+                            <option value="1">Categoria</option>
+                            <option value="2">Descripcion</option>
+                        </select>
+                    </div>
+
+                    <div id="tipoCategoriaModal" style="display:none;">
+                        <div class="form-group col-md-3">
+                            <label for="cboCategoriaModal">Categoria</label>
+                            <select class="form-control input-sm" id="cboCategoriaModal">
+                                <option value="0">Seleccionar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="tipoDescripcionModal" style="display:none;">
+                        <div class="form-group col-md-3">
+                            <label for="txtDescripcionModal">Descripcion</label>
+                            <input type="text" class="form-control input-sm" id="txtDescripcionModal">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-1">
+                        <label for="btnBuscarModal"><font color="white">_</font></label>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnBuscarModal">
+                            <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Buscar
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table id="tblListadoProductos" class="table table-bordered table-striped table-hover table-condensed" style="width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th width="10%;">Categoria</th>
+                                        <th width="10%;">Descripcion</th>
+                                        <th width="10%;">Cantidad</th>
+                                        <th width="10%;">Precio</th>
+                                        <th width="10%;">Precio Mayor</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" type="button" id="btnSaveProducto">Guardar</button>
+                <button class="btn btn-default btn-sm" type="button" data-dismiss="modal" id="btnCloseEncuesta">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Content/js/Ventas/ventas.js"></script>
+}

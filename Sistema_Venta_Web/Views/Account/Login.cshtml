@@ -1,0 +1,106 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutMinimal.cshtml";
+    ViewBag.Title = "Login";
+    var errorSummary = ViewData.ModelState.Values.SelectMany(m => m.Errors);
+
+}
+
+@model Sistema_Venta_Web.Models.LoginViewModel
+
+<div class="row">
+    <div class="col-md-offset-4 col-sm-offset-4 col-sm-4 col-xs-12 bsp-box-login">
+        @if (errorSummary.Any())
+        {
+            <br />
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <ul>
+                    @foreach (var item in errorSummary)
+                    {
+                        <li>@item.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+        @using (Html.BeginForm("Login", "Account", new { returnURl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form", role = "role" }))
+        {
+            @Html.AntiForgeryToken()
+            <h3>Iniciar Sesi&oacute;n</h3>
+            <hr />
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.UserName)
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Nombre de usuario" })
+                </div>
+                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Password)
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                    </span>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Contraseña" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Ingresar" class="btn btn-danger" style="width:100%;" />
+            </div>
+        }
+
+        @*<hr />
+
+        <div class="form-group">
+            <input type="submit" id="btnRegistro" value="Registrarse" class="btn btn-success" style="width:100%;" readonly />
+        </div>*@        
+    </div>
+</div>
+
+@*<div class="modal fade" id="modalRegistro" tabindex="-1" role="dialog" aria-labelledby="titleModal" aria-hidden="true">
+    <div class="modal-dialog modal-m" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="titleModalRegistro">Registrar Usuario</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formModal" class="small" onkeypress="return event.keyCode != 13;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="txtModalUsuario">Usuario</label>
+                                <input class="form-control input-sm" type="text" id="txtModalUsuario" maxlength="255" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="txtModalClave">Contraseña</label>
+                                    <input class="form-control input-sm" type="password" id="txtModalClave" maxlength="255" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" type="button" id="btnRegistrar">Guardar</button>
+                <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/js/Usuario/registro.js"></script>
+}*@

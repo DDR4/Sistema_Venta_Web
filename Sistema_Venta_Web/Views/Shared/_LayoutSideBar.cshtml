@@ -1,0 +1,79 @@
+﻿@using Microsoft.AspNet.Identity
+
+@if (User.Identity.IsAuthenticated)
+{
+    //Obtenemos la lista con las opciones de menu y objeto.
+    var opcMenu = AppConfig.MenuAplicacion;
+
+    var listaMenuPadre = opcMenu.Where(x => x.CodigoOpcion == x.CodigoOpcionPadre && x.TipoOpcion == "Menu");
+
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" style="height:auto;">
+            <!-- Sidebar Menu -->
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header">MENU PRINCIPAL</li>               
+
+                <!--Pintamos las opciones relacionadas al primer menu padre.-->
+
+                @{
+                    string url = "";
+                    foreach (var item in listaMenuPadre)
+                    {
+                        var listaEsPadre = opcMenu.Where(x => x.CodigoOpcionPadre == item.CodigoOpcion && x.CodigoOpcion != item.CodigoOpcion && x.TipoOpcion == "Menu");
+
+                        if (listaEsPadre.Any())
+                        {
+                            <li class="treeview">
+                                <a href="#">
+                                    @if (!string.IsNullOrEmpty(item.Icono))
+                                    {
+                                        <i class="@item.Icono"></i>
+                                    }
+                                    <span>@item.Descripcion</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>     
+                                @(new HtmlString(AppConfig.CargarSubMenus(@item.CodigoOpcion, @opcMenu)))
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                @if (!string.IsNullOrEmpty(item.Url.Trim()) || item.Url.Trim() != "#")
+                                {
+                                    url = string.Concat(AppConfig.UriBase, item.Url.Trim());
+                                }
+                                else
+                                {
+                                    url = "#";
+                                }
+                                <a href="@url">
+                                    @if (!string.IsNullOrEmpty(item.Icono))
+                                    {
+                                        <i class="@item.Icono"></i>
+                                    }
+                                    <span>@item.Descripcion</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                }
+            </ul>
+        </section>
+    </aside>
+}
+else
+{
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar" style="height:auto;">
+            <!-- Sidebar Menu -->
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header">MENU PRINCIPAL</li>
+                <!-- Optionally, you can add icons to the links -->
+            </ul>
+        </section>
+    </aside>
+}

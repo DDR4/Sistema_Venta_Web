@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Acceso denegado";
+}
+
+<!-- Main content -->
+<section class="content container-fluid">
+    <div class="jumbotron">
+        <h1>No Autorizado</h1>
+        <p class="lead">Usted no est&acute; autorizado para aceder al sistema o su sessión ha expirado.</p>
+        <a class="btn btn-danger" href="@Url.Action("Login", "Account", new { area = "Account", returnUrl = Url.Action("Index", "Home", new { area = "" }) })" class="dropdown-toggle">Ingresar al sistema</a>
+    </div>
+</section>

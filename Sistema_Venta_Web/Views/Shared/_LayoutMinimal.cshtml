@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- Enable compatibility -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;IE=10;IE=9" />
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <!-- Title of page -->
+    <title>@ViewBag.Title</title>
+    <!-- Icon application -->
+    <link rel="icon" href="~/favicon.ico">
+    <!-- Styles -->
+    <link href="~/Content/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/lib/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/css/main.css" rel="stylesheet" />
+    <link href="~/Content/css/skin-red.css" rel="stylesheet" />
+    <script src="~/Content/lib/modernizr/js/modernizr-2.8.3.js"></script>
+</head>
+<body class="skin-red">
+    <!-- Layout -->
+    <div class="bsp-wrapper">
+        <!-- Body -->
+        <div class="bsp-body-wrapper">
+            <!-- Header -->
+            <div class="bsp-header">
+                <div class="container-fluid">
+                    <span class="bsp-brand">
+                        @*<img src="~/Content/img/full_logo_withe_transparent_2.png" alt="Logo" />*@
+                    </span>
+                </div>
+            </div>
+            <!-- Content -->
+            <div class="bsp-content">
+                <div class="container-fluid" id="bodyMainContent">
+                    @RenderBody()
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="bsp-footer">
+                <div class="container-fluid">
+                    <footer>
+                        @*@(string.Format("{0} | {1} {2}", AppConfig.ApplicationCopyright, AppConfig.ApplicationShortName, AppConfig.ApplicationVersion))*@
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="~/Content/lib/jquery/js/jquery-3.3.1.min.js"></script>
+    <script src="~/Content/lib/jquery/js/jquery.validate.min.js"></script>
+    <script src="~/Content/lib/jquery/js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Content/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Content/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Content/lib/bootstrap-datepicker/js/bootstrap-datepicker.es.min.js"></script>
+    <script type="text/javascript">
+            var baseSiteUrl = '@Url.Content("~/")';
+    </script>
+    <script src="~/Content/js/app.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>

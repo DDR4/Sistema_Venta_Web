@@ -138,11 +138,17 @@
         var flag = true;
         var br = "<br>";
         var msg = "";
+        var rbsaco = $('input[name=rbsaco]:checked').val();
 
         msg += app.ValidarCampo($cboModalCategoria.val(), "• El tipo de producto.");
         msg += app.ValidarCampo($txtModalDescripcion.val(), "• La descripción.");
         msg += app.ValidarCampo($txtModalPrecio.val(), "• El precio.");
+        msg += app.ValidarCampo($txtModalPrecioMayor.val(), "• El precio mayor.");
         msg += app.ValidarCampo($txtModalCantidad.val(), "• La cantidad.");
+        msg += app.ValidarCampo(rbsaco, "• La opción saco.");
+        if (rbsaco == 1) {
+            msg += app.ValidarCampo($txtModalKilos.val(), "• Los kilos.");
+        }
         msg += app.ValidarCampo($cboModalEstado.val(), "• El estado.");                 
 
         if (msg !== "") {

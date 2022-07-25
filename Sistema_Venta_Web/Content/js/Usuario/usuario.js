@@ -12,8 +12,6 @@
     var $cboModalTipo = $('#cboModalTipo');  
     var $cboModalEstado = $('#cboModalEstado');
     var $titleModalUsuario = $('#titleModalUsuario');
-
-    var $divClave = $('#divClave');
                                                    
     var Message = {
         ObtenerTipoBusqueda: "Obteniendo los tipos de busqueda, Por favor espere...",
@@ -44,11 +42,31 @@
         $cboModalTipo.val(0);
         $cboModalEstado.val(1);
         app.Event.Disabled($cboModalEstado);
-        $divClave.show();
     }
 
     function $btnGuardar_click() {
-        InsertUpdateUsuario();
+        if (Validar()) {
+            InsertUpdateUsuario();
+        }
+    }
+
+    function Validar() {
+        var flag = true;
+        var br = "<br>";
+        var msg = "";
+
+        msg += app.ValidarCampo($txtModalUsuario.val(), "• El usuario.");
+        msg += app.ValidarCampo($txtModalClave.val(), "• La clave.");
+        msg += app.ValidarCampo($cboModalTipo.val(), "• El tipo.");
+        msg += app.ValidarCampo($cboModalEstado.val(), "• El estado.");
+
+        if (msg !== "") {
+            flag = false;
+            var msgTotal = "Por favor, Ingrese los siguientes campos del usuario: " + br + msg;
+            app.Message.Info("Aviso", msgTotal);
+        }
+
+        return flag;
     }
 
     function InsertUpdateUsuario() {
@@ -141,7 +159,6 @@
         app.Event.Enable($cboModalEstado);
         $cboModalEstado.val(data.Usuario_Estado).trigger('change');
         $cboModalTipo.val(data.Usuario_Tipo).trigger('change');
-        $divClave.hide();
     }
 
     function EliminarUsuario(row) {

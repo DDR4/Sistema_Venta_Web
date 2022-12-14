@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Xml.Linq;
 
 namespace Sistema_Venta_Web.Controllers
 {
@@ -201,7 +200,8 @@ namespace Sistema_Venta_Web.Controllers
 
 
             string[] Cabezeras = {
-                    "Código Venta","Marca","Precio Producto","Precio Venta","Descuento","Precio Total","Fecha"
+                    "Descripción","Tipo Venta","Tipo Pago","Cantidad","Precio Producto","Precio Venta",
+                    "Descuento","Precio Total","Fecha"
              };
 
             // Se crea la primera fila para las cabceras.
@@ -227,20 +227,23 @@ namespace Sistema_Venta_Web.Controllers
             var styleBody = (XSSFCellStyle)wb.CreateCellStyle();
             styleBody.SetFont(fontBody);
 
-
             // Impresión de la data
             foreach (var item in data)
             {
                 cellnum = 0;
                 row = sheet.CreateRow(rownum++);
 
-                AddValue(row, cellnum++, item.Venta_Id.ToString(), styleBody, sheet);
                 AddValue(row, cellnum++, item.Producto.Producto_Nombre.ToString(), styleBody, sheet);
+                AddValue(row, cellnum++, item.TipoVenta.TipoVenta_Id == 1 ? "Mayor" : 
+                    item.TipoVenta.TipoVenta_Id == 2 ? "Menor" : "Granel", styleBody, sheet);
+                AddValue(row, cellnum++, item.TipoPago.TipoPago_Id == 1 ? "Efectivo" : "Credito/Tarjeta", styleBody, sheet);
+                AddValue(row, cellnum++, item.Venta_Cantidad.ToString("F"), styleBody, sheet);
                 AddValue(row, cellnum++, item.Producto.Producto_Precio.ToString("F2"), styleBody, sheet);              
                 AddValue(row, cellnum++, item.Venta_Precio.ToString("F2"), styleBody, sheet);
                 AddValue(row, cellnum++, item.Venta_Descuento.ToString("F2"), styleBody, sheet);
                 AddValue(row, cellnum++, item.Venta_Precio_Total.ToString("F2"), styleBody, sheet);
-                AddValue(row, cellnum++, item.Fecha.ToString().Substring(6, 2) + "/" + item.Fecha.ToString().Substring(4, 2) + "/" + item.Fecha.ToString().Substring(0, 4), styleBody, sheet);
+                AddValue(row, cellnum++, item.Fecha.ToString().Substring(6, 2) + "/" + item.Fecha.ToString().Substring(4, 2) 
+                    + "/" + item.Fecha.ToString().Substring(0, 4), styleBody, sheet);
 
             }
 

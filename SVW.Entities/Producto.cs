@@ -10,6 +10,7 @@ namespace SVW.Entities
     public class Producto
     {
         public int? Producto_Id { get; set; }
+        public string Producto_Codigo { get; set; }
         public string Producto_Nombre { get; set; }
         public double Producto_Precio { get; set; }
         public double Producto_Precio_Mayor { get; set; }

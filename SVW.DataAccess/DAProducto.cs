@@ -32,6 +32,7 @@ namespace SVW.DataAccess
                      .Select(n => new Producto
                      {
                          Producto_Id = n.Single(d => d.Key.Equals("Producto_Id")).Value.Parse<int>(),
+                         Producto_Codigo = n.Single(d => d.Key.Equals("Producto_Codigo")).Value.Parse<string>(),
                          Producto_Nombre = n.Single(d => d.Key.Equals("Producto_Nombre")).Value.Parse<string>(),
                          Producto_Precio = n.Single(d => d.Key.Equals("Producto_Precio")).Value.Parse<double>(),
                          Producto_Precio_Mayor = n.Single(d => d.Key.Equals("Producto_Precio_Mayor")).Value.Parse<double>(),
@@ -89,6 +90,7 @@ namespace SVW.DataAccess
                 connection.Open();
                 var parm = new DynamicParameters();
                 parm.Add("@Producto_Id", obj.Producto_Id);
+                parm.Add("@Producto_Codigo", obj.Producto_Codigo);
                 parm.Add("@Categoria_Id", obj.Categoria.Categoria_Id);
                 parm.Add("@Producto_Nombre", obj.Producto_Nombre);
                 parm.Add("@Producto_Precio", obj.Producto_Precio);

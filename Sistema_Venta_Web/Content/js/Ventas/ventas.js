@@ -237,6 +237,7 @@
         $modalVentas.modal();
         $formModal[0].reset();
         app.Event.SetDateDatepicket($txtModalFecha);
+        $cboModalTipoVenta.html("");
         $cboModalTipoVenta.append("<option value=0>Todos</option>");
     }
 

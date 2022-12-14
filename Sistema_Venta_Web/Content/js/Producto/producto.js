@@ -20,6 +20,7 @@
     var $titleModalProducto = $('#titleModalProducto');
     var $formModal = $('#formModal');
 
+    var $txtModalCodigo = $('#txtModalCodigo');
     var $cboModalCategoria = $('#cboModalCategoria');
     var $txtModalDescripcion = $('#txtModalDescripcion');
     var $txtModalPrecio = $('#txtModalPrecio');
@@ -87,7 +88,8 @@
             else if (this.value == 2) {
                 $divKilos.hide();
             }
-        });
+        });                   
+
     }
 
     function $cboTipoBusqueda_change() {
@@ -200,6 +202,7 @@
 
         var obj = {
             "Producto_Id": Global.Producto_Id,
+            "Producto_Codigo": $txtModalCodigo.val(),
             "Categoria": { "Categoria_Id": $cboModalCategoria.val() },
             "Producto_Nombre": $txtModalDescripcion.val(),
             "Producto_Precio": app.UnformatNumber($txtModalPrecio.val()),
@@ -230,7 +233,8 @@
 
         var url = "Producto/GetProducto";
                                                              
-        var columns = [                           
+        var columns = [
+            { data: "Producto_Codigo" },
             { data: "Categoria.Categoria_Nombre" },
             { data: "Producto_Nombre" },
             { data: "Producto_Precio" },
@@ -244,13 +248,13 @@
 
         var columnDefs = [  
             {
-                "targets": [2,3],
+                "targets": [3,4],
                 'render': function (data, type, full, meta) {
                     return '' + app.FormatNumber(data) + '';
                 }
             },
             {
-                "targets": [5],
+                "targets": [6],
                 "className": "text-center",
                 'render': function (data, type, full, meta) {
                     if (data === 1) {
@@ -260,13 +264,13 @@
                 }
             },
             {
-                "targets": [6],
+                "targets": [7],
                 'render': function (data, type, full, meta) {
                     return '' + app.ConvertIntToDatetimeDT(data) + '';
                 }
             },
             {
-                "targets": [7],
+                "targets": [8],
                 "visible": true,
                 "orderable": false,
                 "className": "text-center",
@@ -308,6 +312,7 @@
         $titleModalProducto.html("Editar Producto");
         $modalProducto.modal();
         Global.Producto_Id = data.Producto_Id;
+        $txtModalCodigo.val(data.Producto_Codigo);
         $txtModalDescripcion.val(data.Producto_Nombre);
         $txtModalPrecio.val(app.FormatNumber(data.Producto_Precio));
         $txtModalPrecioMayor.val(app.FormatNumber(data.Producto_Precio_Mayor));
@@ -318,9 +323,11 @@
         $("input[name=rbsaco][value=" + data.Producto_Tipo+"]").prop('checked', true);
         $cboModalEstado.val(data.Producto_Estado).trigger('change');
 
-        if (data.Producto_Tipo = 1) {
+        if (data.Producto_Tipo == 1) {
             $divKilos.show();
-        }
+        } else if (data.Producto_Tipo == 2) {
+            $divKilos.hide();
+        } 
     }
 
     function EliminarProducto(row) {
@@ -381,8 +388,6 @@
             $txtFechaDesde.val("");
         }
     }
-
-
 
     return {
         EliminarProducto: EliminarProducto,

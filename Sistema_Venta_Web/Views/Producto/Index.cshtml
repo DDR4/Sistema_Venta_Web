@@ -119,6 +119,7 @@
                                 <table id="tblListadoProductos" class="table table-bordered table-striped table-hover table-condensed" style="width:100%;">
                                     <thead>
                                         <tr>
+											<th width="10%;">C&oacute;digo</th>
                                             <th width="10%;">Categor&iacute;a</th>
                                             <th width="20%;">Descripci&oacute;n</th>
                                             <th width="8%;">Precio</th>
@@ -151,6 +152,12 @@
             <div class="modal-body">
                 <form id="formModal" class="small" onkeypress="return event.keyCode != 13;">
                     <div class="row">
+						<div class="col-md-4">
+                            <div class="form-group">
+                                <label for="txtModalCodigo">C&oacute;digo</label>
+                                <input class="form-control input-sm" type="text" id="txtModalCodigo" maxlength="20" placeholder="" />
+                            </div>
+                        </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="cboModalCategoria">Categor&iacute;a</label>
@@ -164,15 +171,15 @@
                                 <label for="txtModalDescripcion">Descripcion</label>
                                 <input class="form-control input-sm" type="text" id="txtModalDescripcion" maxlength="255" placeholder="" />
                             </div>
-                        </div>
-                        <div class="col-md-4">
+                        </div>                       
+                    </div>
+                    <div class="row">
+						<div class="col-md-4">
                             <div class="form-group">
                                 <label for="txtModalPrecio">Precio</label>
                                 <input class="form-control input-sm" type="text" id="txtModalPrecio" maxlength="10" value="0.00" />
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="txtModalPrecioMayor">Precio Mayor</label>
@@ -184,8 +191,10 @@
                                 <label for="txtModalCantidad">Cantidad</label>
                                 <input class="form-control input-sm" type="text" id="txtModalCantidad" maxlength="5" value="0" />
                             </div>
-                        </div>
-                        <div class="col-md-4">
+                        </div>                       
+                    </div>
+                    <div class="row">
+						<div class="col-md-4">
                             <div class="form-group">
                                 <label>Saco</label>
                                 <div class="form-check-inline">
@@ -198,8 +207,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div id="divKilos" style="display:none;">
                             <div class="col-md-4">
                                 <div class="form-group">

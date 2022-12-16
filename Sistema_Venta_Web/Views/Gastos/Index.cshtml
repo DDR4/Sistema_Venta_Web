@@ -1,0 +1,174 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Gastos";
+}
+
+
+
+<section class="content-header">
+    <h1>Gastos</h1>
+</section>
+<section class="content">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">&nbsp;</h3>
+
+                    <div class="box-tools pull-right">
+                        @if (User.Identity.GetUserId().Equals("1"))
+                        {
+                            <button class="btn btn-success btn-sm-max" id="btnNuevaGasto"><span class="fa fa-plus-square"></span> Nueva Gasto</button>
+                        }
+
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="box-body ">
+                    <form id="form1">
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="cboTipoBusqueda">Tipo b&uacute;squeda</label>
+                                <select class="form-control input-sm" style="width:100%;" id="cboTipoBusqueda">
+                                    <option value="0">Todos</option>
+                                    <option value="1">Estado</option>
+									<option value="2">Fecha</option>
+                                </select>
+                            </div>                          
+                            <div id="tipoEstado" style="display:none;">
+                                <div class="form-group col-md-3">
+                                    <label for="cboEstado">Estado</label>
+                                    <select class="form-control input-sm" id="cboEstado">
+                                        <option value="0" selected>Todos</option>
+                                        <option value="1">Activo</option>
+                                        <option value="2">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+							<div id="tipoFecha" style="display:none;">
+                                <div class="form-group col-md-2">
+                                    <label for="txtFecha">Fecha</label>
+                                    <input type='text' class="form-control" id="txtFecha" readonly />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-1">
+                                <label for="btnBuscar"><font color="white">_</font></label>
+                                <button type="button" class="btn btn-primary btn-sm" id="btnBuscar">
+                                    <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">&nbsp;</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="box-body ">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table id="tblListadoGastos" class="table table-bordered table-striped table-hover table-condensed" style="width:100%;">
+                                    <thead>
+                                        <tr>
+                                            <th width="20%;">Descripci&oacute;n</th>
+                                            <th width="10%;">Total</th>
+											<th width="10%;">Fecha</th>
+                                            <th width="10%;">Estado</th>										
+                                            <th width="8%;"></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<div class="modal fade" id="modalGasto" tabindex="-1" role="dialog" aria-labelledby="titleModal" aria-hidden="true">
+     <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="titleModalGasto">Agregar Gasto</h4>
+            </div>
+            <div class="modal-body">
+                <form id="formModal" class="small" onkeypress="return event.keyCode != 13;">
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label for="txtModalDescripcion">Descripci&oacute;n</label>
+                                <input class="form-control input-sm" type="text" id="txtModalDescripcion" maxlength="25" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label for="txtModalTotal">Total</label>
+                                <input class="form-control input-sm" type="text" id="txtModalTotal" maxlength="10" autocomplete="off" />
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-md-1"></div>
+						<div class="col-md-10">
+							<div class="form-group">
+								<label for="txtModalFecha">Fecha</label>
+								<input type='text' class="form-control" id="txtModalFecha" readonly />
+							</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="form-group col-md-10">
+                            <label for="cboModalEstado">Estado</label>
+                            <select class="form-control input-sm" id="cboModalEstado">
+                                <option value="0" selected>Todos</option>
+                                <option value="1">Activo</option>
+                                <option value="2">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" type="button" id="btnGuardar">Guardar</button>
+                <button class="btn btn-default btn-sm" type="button" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/js/Gastos/Gastos.js"></script>
+}   

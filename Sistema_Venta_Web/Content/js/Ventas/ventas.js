@@ -216,7 +216,7 @@
         switch (vcboTipoBusqueda) {
 
             case 2:
-                msg += app.ValidarCampo(Fecha, "• La fecha.");
+                msg += app.ValidarCampo(Fecha, "• La Fecha.");
                 break;
 
             default:
@@ -247,7 +247,7 @@
 
         if (total > 0) {
             InsertUpdateVenta();
-        } else if (total === 0) {
+        } else if (total === 0 || total === "") {
             app.Message.Info("Aviso", "Ingrese un precio de venta.", null, null);
         }
 

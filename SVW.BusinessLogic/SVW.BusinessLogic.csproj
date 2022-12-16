@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="BLAuthorization.cs" />
     <Compile Include="BLProducto.cs" />
+    <Compile Include="BLGastos.cs" />
     <Compile Include="BLUsuario.cs" />
     <Compile Include="BLVentas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="DAAuthorization.cs" />
     <Compile Include="DAProducto.cs" />
+    <Compile Include="DAGastos.cs" />
     <Compile Include="DAUsuario.cs" />
     <Compile Include="DAVentas.cs" />
     <Compile Include="Factory.cs" />

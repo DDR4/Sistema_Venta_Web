@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace Sistema_Venta_Web.Controllers
 {
-    public class UsuarioController : Controller
+    public class GastosController : Controller
     {
 
         public ActionResult Index()
@@ -18,7 +18,7 @@ namespace Sistema_Venta_Web.Controllers
             return View();
         }
 
-        public JsonResult GetUsuario(Usuario obj)
+        public JsonResult GetGasto(Gastos obj)
         {
             var ctx = HttpContext.GetOwinContext();
             var tipoUsuario = ctx.Authentication.User.Claims.FirstOrDefault().Value;
@@ -37,8 +37,8 @@ namespace Sistema_Venta_Web.Controllers
                 Fin = fin
             };
 
-            var bussingLogic = new SVW.BusinessLogic.BLUsuario();
-            var response = bussingLogic.GetUsuario(obj);
+            var bussingLogic = new SVW.BusinessLogic.BLGastos();
+            var response = bussingLogic.GetGastos(obj);
 
             var Datos = response.Data;
             int totalRecords = Datos.Any() ? Datos.FirstOrDefault().Operacion.TotalRows : 0;
@@ -55,9 +55,9 @@ namespace Sistema_Venta_Web.Controllers
             return Json(result);
         }
 
-        public JsonResult InsertUpdateUsuario(Usuario obj)
+        public JsonResult InsertUpdateGasto(Gastos obj)
         {
-            var bussingLogic = new SVW.BusinessLogic.BLUsuario();
+            var bussingLogic = new SVW.BusinessLogic.BLGastos();
 
             obj.Auditoria = new Auditoria
             {
@@ -65,21 +65,21 @@ namespace Sistema_Venta_Web.Controllers
                 UsuarioModificacion = User.Identity.Name
             };
 
-            var response = bussingLogic.InsertUpdateUsuario(obj);
+            var response = bussingLogic.InsertUpdateGastos(obj);
 
             return Json(response);
         }
 
-        public JsonResult DeleteUsuario(Usuario obj)
+        public JsonResult DeleteGasto(Gastos obj)
         {
-            var bussingLogic = new SVW.BusinessLogic.BLUsuario();
+            var bussingLogic = new SVW.BusinessLogic.BLGastos();
 
             obj.Auditoria = new Auditoria
             {
                 UsuarioModificacion = User.Identity.Name
             };
 
-            var response = bussingLogic.DeleteUsuario(obj);
+            var response = bussingLogic.DeleteGastos(obj);
 
             return Json(response);
         }

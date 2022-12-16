@@ -55,10 +55,10 @@
         var br = "<br>";
         var msg = "";
 
-        msg += app.ValidarCampo($txtModalUsuario.val(), "• El usuario.");
-        msg += app.ValidarCampo($txtModalClave.val(), "• La clave.");
-        msg += app.ValidarCampo($cboModalTipo.val(), "• El tipo.");
-        msg += app.ValidarCampo($cboModalEstado.val(), "• El estado.");
+        msg += app.ValidarCampo($txtModalUsuario.val(), "• El Usuario.");
+        msg += app.ValidarCampo($txtModalClave.val(), "• La Clave.");
+        msg += app.ValidarCampo($cboModalTipo.val(), "• El Tipo.");
+        msg += app.ValidarCampo($cboModalEstado.val(), "• El Estado.");
 
         if (msg !== "") {
             flag = false;

@@ -198,6 +198,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
+    <Compile Include="Controllers\GastosController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Controllers\VentasController.cs" />
     <Compile Include="Core\Filter\CustomAuthorizeAttribute.cs" />
@@ -222,6 +223,7 @@
     <Content Include="Content\img\user-256.png" />
     <Content Include="Content\js\app.js" />
     <Content Include="Content\js\Producto\producto.js" />
+    <Content Include="Content\js\Gastos\gastos.js" />
     <Content Include="Content\js\Usuario\usuario.js" />
     <Content Include="Content\js\Ventas\ventas.js" />
     <Content Include="Content\lib\adminLTE\css\adminLTE.min.css" />
@@ -354,6 +356,7 @@
     <Content Include="Views\Shared\_LayoutModals.cshtml" />
     <Content Include="Views\Shared\_LayoutSideBar.cshtml" />
     <Content Include="Views\Shared\_LayoutSideBarControl.cshtml" />
+    <Content Include="Views\Gastos\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

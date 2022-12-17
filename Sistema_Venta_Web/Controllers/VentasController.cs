@@ -66,61 +66,6 @@ namespace Sistema_Venta_Web.Controllers
 
         }
 
-        public JsonResult GetProducto(Producto obj)
-        {
-            try
-            {
-                var bussingLogic = new SVW.BusinessLogic.BLProducto();
-                obj.Producto_Cantidad = 1;
-                obj.Producto_Estado = 1;
-                var ctx = HttpContext.GetOwinContext();
-                var tipoUsuario = ctx.Authentication.User.Claims.FirstOrDefault().Value;
-
-                string draw = Request.Form.GetValues("draw")[0];
-                int inicio = Convert.ToInt32(Request.Form.GetValues("start").FirstOrDefault());
-                int fin = Convert.ToInt32(Request.Form.GetValues("length").FirstOrDefault());
-
-                obj.Auditoria = new Auditoria
-                {
-                    TipoUsuario = tipoUsuario
-                };
-                obj.Operacion = new Operacion
-                {
-                    Inicio = (inicio / fin),
-                    Fin = fin
-                };
-
-                var response = bussingLogic.GetProducto(obj);
-                var Datos = response.Data;
-                int totalRecords = Datos.Any() ? Datos.FirstOrDefault().Operacion.TotalRows : 0;
-                int recFilter = totalRecords;
-
-                var result = (new
-                {
-                    draw = Convert.ToInt32(draw),
-                    recordsTotal = totalRecords,
-                    recordsFiltered = recFilter,
-                    data = Datos
-                });
-
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                return Json(ConfigurationUtilities.ErrorCatchDataTable(ex));
-            }
-
-        }
-
-        public JsonResult GetCategoria()
-        {
-            var bussingLogic = new SVW.BusinessLogic.BLProducto();
-
-            var response = bussingLogic.GetCategoria();
-
-            return Json(response);
-        }
-
         public JsonResult InsertUpdateVentas(Ventas obj)
         {
             var bussingLogic = new SVW.BusinessLogic.BLVentas();

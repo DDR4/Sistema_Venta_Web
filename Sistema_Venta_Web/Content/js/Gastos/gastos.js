@@ -13,17 +13,36 @@
 
     var $tblListadoGastos = $('#tblListadoGastos');
 
-    // Modal
+    // Modal Gasto
     var $modalGasto = $('#modalGasto');
     var $titleModalGasto = $('#titleModalGasto');
     var $formModal = $('#formModal');
 
+    var $txtModalFecha = $('#txtModalFecha');
+    var $txtModalDescripcionProducto = $('#txtModalDescripcionProducto');
     var $txtModalDescripcion = $('#txtModalDescripcion');
     var $txtModalTotal = $('#txtModalTotal');
-    var $txtModalFecha = $('#txtModalFecha');
+    var $txtModalPrecioProducto = $('#txtModalPrecioProducto');
+    var $txtModalCantidad = $('#txtModalCantidad');
+    var $txtModalPrecioTotal = $('#txtModalPrecioTotal');
     var $cboModalEstado = $('#cboModalEstado');
 
+    var $btnProducto = $('#btnProducto');
     var $btnGuardar = $('#btnGuardar');
+
+    //Modal Producto 
+    var $modalProducto = $('#modalProducto');
+
+    var $tipoCategoriaModal = $('#tipoCategoriaModal');
+    var $tipoDescripcionModal = $('#tipoDescripcionModal');
+
+    var $tblListadoProductos = $('#tblListadoProductos');
+    var $btnSaveProducto = $('#btnSaveProducto');
+
+    var $cboTipoBusquedaModal = $('#cboTipoBusquedaModal');
+    var $txtDescripcionModal = $('#txtDescripcionModal');
+    var $cboCategoriaModal = $('#cboCategoriaModal');
+    var $btnBuscarModal = $('#btnBuscarModal');
 
     var Message = {
         ObtenerTipoBusqueda: "Obteniendo los tipos de busqueda, Por favor espere...",
@@ -31,7 +50,13 @@
     };
 
     var Global = {
-        Gasto_Id: null
+
+        Gasto_Id: null,
+        Producto: {
+            Producto_Id: 0,
+            Producto_Nombre: null,
+            Producto_Precio: 0.0,
+        }
     };
 
     // Constructor
@@ -39,17 +64,22 @@
 
     // Implementacion del constructor
     function Initialize() {
-
         $cboTipoBusqueda.change($cboTipoBusqueda_change);
+        $cboTipoBusquedaModal.change($cboTipoBusquedaModal_change);
         $btnBuscar.click($btnBuscar_click);
         $btnGuardar.click($btnGuardar_click);
+        $btnProducto.click($btnProducto_click);
+        $btnSaveProducto.click($btnSaveProducto_click);
+        $btnBuscarModal.click($btnBuscarModal_click);
         $btnNuevaGasto.click($btnNuevaGasto_click);
         GetGasto();
+        GetCategoria();
         app.Event.Datepicker($txtFecha);
-        app.Event.Datepicker($txtModalFecha);
-
         app.Event.ForceDecimalOnly($txtModalTotal);
+        app.Event.Number($txtModalCantidad);
         app.Event.Blur($txtModalTotal, "N");
+        $txtModalTotal.blur($txtModalPrecioTotal_keypress);
+        $txtModalCantidad.blur($txtModalPrecioTotal_keypress);
     }
 
     function $cboTipoBusqueda_change() {
@@ -70,6 +100,7 @@
 
     function $btnNuevaGasto_click() {
         $formModal[0].reset();
+        app.Event.SetDateDatepicket($txtModalFecha);
         Global.Gasto_Id = null;
         $modalGasto.modal();
         $cboModalEstado.val(1).trigger('change');
@@ -84,26 +115,23 @@
     }
 
     function $btnGuardar_click() {
-        if (Validar()) {
-            InsertUpdateGasto();
+
+        var Total = app.UnformatNumber($txtModalTotal.val());
+        var PrecioTotal = app.UnformatNumber($txtModalPrecioTotal.val());
+
+        if (PrecioTotal > 0) {
+            if (PrecioTotal <= Total) {
+                InsertUpdateGasto();
+            }
+            else
+            {
+                app.Message.Info("Aviso", "El precio total no puede ser mayor al total.", null, null);
+            }     
+           
+        } else if (total === 0 || total === "") {
+            app.Message.Info("Aviso", "Ingrese un precio total.", null, null);
         }
-    }
-
-    function Validar() {
-        var flag = true;
-        var br = "<br>";
-        var msg = "";
-        msg += app.ValidarCampo($txtModalDescripcion.val(), "• La Descripción.");
-        msg += app.ValidarCampo($txtModalTotal.val(), "• El Total.");
-        msg += app.ValidarCampo($cboModalEstado.val(), "• El Estado.");
-
-        if (msg !== "") {
-            flag = false;
-            var msgTotal = "Por favor, Ingrese los siguientes campos del Gasto: " + br + msg;
-            app.Message.Info("Aviso", msgTotal);
-        }
-
-        return flag;
+        
     }
 
     function ValidaBusqueda() {
@@ -141,7 +169,9 @@
 
         var obj = {
             "Gasto_Id": Global.Gasto_Id,
+            "Producto.Producto_Id": Global.Producto.Producto_Id,            
             "Gasto_Nombre": $txtModalDescripcion.val(),
+            "Gasto_Cantidad": $txtModalCantidad.val(),
             "Gasto_Total": app.UnformatNumber($txtModalTotal.val()),
             "Gasto_Fecha": app.ConvertDatetimeToInt($txtModalFecha.val(), '/'),
             "Gasto_Estado": $cboModalEstado.val(),
@@ -167,7 +197,10 @@
         var url = "Gastos/GetGasto";
 
         var columns = [
+            { data: "Producto.Producto_Codigo" },
+            { data: "Producto.Producto_Nombre" },
             { data: "Gasto_Nombre" },
+            { data: "Gasto_Cantidad" },
             { data: "Gasto_Total" },   
             { data: "Gasto_Fecha" },
             { data: "Gasto_Estado" },
@@ -177,19 +210,19 @@
 
         var columnDefs = [
             {
-                "targets": [1],
+                "targets": [3,4],
                 'render': function (data, type, full, meta) {
                     return '' + app.FormatNumber(data) + '';
                 }
             },                  
             {
-                "targets": [2],
+                "targets": [5],
                 'render': function (data, type, full, meta) {
                     return '' + app.ConvertIntToDatetimeDT(data) + '';
                 }
             },       
             {
-                "targets": [3],
+                "targets": [6],
                 "className": "text-center",
                 'render': function (data, type, full, meta) {
                     if (data === 1) {
@@ -199,14 +232,13 @@
                 }
             },
             {
-                "targets": [4],
+                "targets": [7],
                 "visible": true,
                 "orderable": false,
                 "className": "text-center",
                 'render': function (data, type, full, meta) {
                     if (data === "1") {
                         return "<center>" +
-                            '<a class="btn btn-default btn-xs" style= "margin-right:0.5em" title="Editar" href="javascript:Gasto.EditarGasto(' + meta.row + ');"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>' +
                             '<a class="btn btn-default btn-xs" style= "margin-right:0.5em" title="Eliminar" href="javascript:Gasto.EliminarGasto(' + meta.row + ')"><i class="fa fa-trash" aria-hidden="true"></i></a>' +
                             "</center> ";
                     } else {
@@ -221,19 +253,6 @@
             pageLength: app.Defaults.TablasPageLength
         };
         app.FillDataTableAjaxPaging($tblListadoGastos, url, parms, columns, columnDefs, filters, null, null);
-    }
-
-    function EditarGasto(row) {
-        var data = app.GetValueRowCellOfDataTable($tblListadoGastos, row);
-        $titleModalGasto.html("Editar Gasto");
-        $modalGasto.modal();
-        Global.Gasto_Id = data.Gasto_Id;      
-        $txtModalDescripcion.val(data.Gasto_Nombre);
-        $txtModalTotal.val(app.FormatNumber(data.Gasto_Total));
-        $txtModalFecha.val(app.ConvertIntToDatetimeDT(data.Gasto_Fecha));
-        app.Event.Enable($cboModalEstado);       
-        $cboModalEstado.val(data.Gasto_Estado).trigger('change');
-
     }
 
     function EliminarGasto(row) {
@@ -253,11 +272,110 @@
             app.CallAjax(method, url, data1, fnDoneCallback, null, null, null);
         };
         app.Message.Confirm("Aviso", "Esta seguro que desea eliminar el Gasto?", "Aceptar", "Cancelar", fnAceptarCallback, null);
+    } 
+
+    function GetCategoria() {
+
+        var method = "POST";
+        var url = "Producto/GetCategoria";
+        var fnDoneCallback = function (data) {
+            $.each(data.Data, function (key, value) {
+                $cboCategoriaModal.append("<option value=" + value.Categoria_Id + ">" + value.Categoria_Nombre + "</option>");
+            });
+        };
+        app.CallAjax(method, url, null, fnDoneCallback);
+    }
+
+    function $btnProducto_click() {
+        $modalProducto.modal();
+        $cboTipoBusquedaModal.val(0).change();
+        LoadProductos();
+    }
+
+    function $cboTipoBusquedaModal_change() {
+
+        var codSelec = $(this).val();
+        $tipoCategoriaModal.hide();
+        $tipoDescripcionModal.hide();
+
+        $cboCategoriaModal.val(0);
+        $txtDescripcionModal.val("");
+
+        if (codSelec === "1") {
+            $tipoCategoriaModal.show();
+        }
+        else if (codSelec === "2") {
+            $tipoDescripcionModal.show();
+        }
+    }
+
+    function LoadProductos() {
+
+        var url = "Producto/GetProducto";
+        var parms = {
+            Categoria: { Categoria_Id: $cboCategoriaModal.val() },
+            Producto_Nombre: $txtDescripcionModal.val().trim()
+        };
+        var columns = [
+            { data: "Categoria.Categoria_Nombre" },
+            { data: "Producto_Nombre" },
+            { data: "Producto_Cantidad" },
+            { data: "Producto_Precio" },
+            { data: "Producto_Precio_Mayor" }
+        ];
+        var columnDefs = [
+            {
+                "targets": [3, 4],
+                'render': function (data, type, full, meta) {
+                    return '' + app.FormatNumber(data) + '';
+                }
+            }
+        ];
+
+        var filters = {
+            pageLength: app.Defaults.TablasPageLength
+        };
+        app.FillDataTableAjaxPaging($tblListadoProductos, url, parms, columns, columnDefs, filters, null, null);
+    }
+
+    function $btnSaveProducto_click() {
+
+        var DatosSeleccionados = $tblListadoProductos.DataTable().rows({ selected: true }).data().toArray();
+        var Producto = DatosSeleccionados[0];
+
+        Global.Producto = {
+            Producto_Id: Producto.Producto_Id,
+            Producto_Nombre: Producto.Producto_Nombre,
+            Producto_Precio: Producto.Producto_Precio
+        };
+
+        $txtModalDescripcionProducto.val(Global.Producto.Producto_Nombre);
+        $txtModalPrecioProducto.val(app.FormatNumber(Global.Producto.Producto_Precio));
+        $modalProducto.modal('hide');
+    }                
+
+    function $btnBuscarModal_click() {
+        LoadProductos();
+    }
+
+    function $txtModalPrecioTotal_keypress() {
+        var PrecioProducto = parseFloat(app.UnformatNumber($txtModalPrecioProducto.val()));
+        var Total = parseFloat(app.UnformatNumber($txtModalTotal.val()));
+        var Cantidad = parseInt($txtModalCantidad.val());
+
+        if (Total > 0) {
+            if (Total >= PrecioProducto) {
+                var PrecioTotal = app.FormatNumber(Cantidad * PrecioProducto);
+                $txtModalPrecioTotal.val(PrecioTotal);
+            } else {
+                app.Message.Info("ERROR", "El precio del gasto no puede ser menor al total", null, null);
+                $txtModalTotal.val("");
+            }
+        }
     }
 
     return {
-        EliminarGasto: EliminarGasto,
-        EditarGasto: EditarGasto
+        EliminarGasto: EliminarGasto
     };
 
 

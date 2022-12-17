@@ -71,7 +71,6 @@
         GetVentas();
         GetCategoria();
         app.Event.Datepicker($txtFecha);
-        app.Event.SetDateDatepicket($txtModalFecha);
         $btnBuscar.click($btnBuscar_click);
         $btnNuevaVenta.click($btnNuevaVenta_click);
         $btnProducto.click($btnProducto_click);
@@ -285,7 +284,7 @@
 
     function LoadProductos() {
 
-        var url = "Ventas/GetProducto";
+        var url = "Producto/GetProducto";
         var parms = {
             Categoria: { Categoria_Id: $cboCategoriaModal.val() },
             Producto_Nombre: $txtDescripcionModal.val().trim()
@@ -306,7 +305,10 @@
             }
         ];         
 
-        app.FillDataTableAjaxPaging($tblListadoProductos, url, parms, columns, columnDefs, null, null, null);
+        var filters = {
+            pageLength: app.Defaults.TablasPageLength
+        };  
+        app.FillDataTableAjaxPaging($tblListadoProductos, url, parms, columns, columnDefs, filters, null, null);
     }
 
     function $btnSaveProducto_click() {

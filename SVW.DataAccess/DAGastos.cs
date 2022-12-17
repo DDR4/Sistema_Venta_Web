@@ -29,11 +29,17 @@ namespace SVW.DataAccess
                      .Select(m => m as IDictionary<string, object>)
                      .Select(n => new Gastos
                      {
+                         Producto = new Producto
+                         {
+                             Producto_Codigo = n.Single(d => d.Key.Equals("Producto_Codigo")).Value.Parse<string>(),
+                             Producto_Nombre = n.Single(d => d.Key.Equals("Producto_Nombre")).Value.Parse<string>(),
+                         },
                          Gasto_Id = n.Single(d => d.Key.Equals("Gasto_Id")).Value.Parse<int>(),
                          Gasto_Nombre = n.Single(d => d.Key.Equals("Gasto_Nombre")).Value.Parse<string>(),
+                         Gasto_Cantidad = n.Single(d => d.Key.Equals("Gasto_Cantidad")).Value.Parse<int>(),
                          Gasto_Total = n.Single(d => d.Key.Equals("Gasto_Total")).Value.Parse<double>(),
-                         Gasto_Estado = n.Single(d => d.Key.Equals("Gasto_Estado")).Value.Parse<int>(),
                          Gasto_Fecha = n.Single(d => d.Key.Equals("Gasto_Fecha")).Value.Parse<int>(),
+                         Gasto_Estado = n.Single(d => d.Key.Equals("Gasto_Estado")).Value.Parse<int>(),
                          Auditoria = new Auditoria
                          {
                              TipoUsuario = obj.Auditoria.TipoUsuario,
@@ -55,7 +61,9 @@ namespace SVW.DataAccess
                 connection.Open();
                 var parm = new DynamicParameters();
                 parm.Add("@Gasto_Id", obj.Gasto_Id);
+                parm.Add("@Producto_Id", obj.Producto.Producto_Id);
                 parm.Add("@Gasto_Nombre", obj.Gasto_Nombre);
+                parm.Add("@Gasto_Cantidad", obj.Gasto_Cantidad);
                 parm.Add("@Gasto_Total", obj.Gasto_Total);
                 parm.Add("@Gasto_Fecha", obj.Gasto_Fecha);
                 parm.Add("@Gasto_Estado", obj.Gasto_Estado);

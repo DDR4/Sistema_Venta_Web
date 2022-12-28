@@ -22,5 +22,6 @@ namespace SVW.Entities
         public Producto Producto { get; set; }
         public Operacion Operacion { get; set; }
         public Auditoria Auditoria { get; set; }
+        public List<Producto> ProductosSeleccionados { get; set; }
     }
 }

@@ -66,17 +66,39 @@ namespace Sistema_Venta_Web.Controllers
 
         }
 
-        public JsonResult InsertUpdateVentas(Ventas obj)
+        public JsonResult InsertUpdateVentas(List<Ventas> productosSeleccionados)
         {
             var bussingLogic = new SVW.BusinessLogic.BLVentas();
-            obj.Auditoria = new Auditoria
+
+            int response = 0;
+
+            foreach (var item in productosSeleccionados)
             {
-                UsuarioCreacion = User.Identity.Name
-            };
-
-            var response = bussingLogic.InsertUpdateVentas(obj);
-
-            return Json(response);
+                Ventas obj = new Ventas();
+                obj.Producto = new Producto
+                {
+                    Producto_Id = item.Producto.Producto_Id
+                };               
+                obj.Venta_Cantidad = item.Venta_Cantidad;
+                obj.Venta_Precio = item.Venta_Precio;
+                obj.Venta_Descuento = item.Venta_Descuento;
+                obj.Venta_Precio_Total = item.Venta_Precio_Total;
+                obj.TipoVenta = new TipoVenta
+                {
+                    TipoVenta_Id = item.TipoVenta.TipoVenta_Id
+                };
+                obj.TipoPago = new TipoPago
+                {
+                    TipoPago_Id = item.TipoPago.TipoPago_Id
+                };
+                obj.Auditoria = new Auditoria
+                {
+                    UsuarioCreacion = User.Identity.Name
+                };
+                response = bussingLogic.InsertUpdateVentas(obj).Data;               
+            }
+            Response<int> result = new Response<int>(response);
+            return Json(result);
         }
 
         public JsonResult DeleteVentas(Ventas obj)

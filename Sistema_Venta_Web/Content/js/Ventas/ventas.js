@@ -22,8 +22,10 @@
     var $txtModalPrecioProducto = $('#txtModalPrecioProducto');
     var $txtModalDescuento = $('#txtModalDescuento');
     var $txtModalTotal = $('#txtModalTotal');
+    var $txtModalTotalFinal = $('#txtModalTotalFinal');
 
     var $btnProducto = $('#btnProducto');
+    var $btnAgregarProducto = $('#btnAgregarProducto');
     var $btnSaveVenta = $('#btnSaveVenta');
 
     //Modal Producto 
@@ -40,26 +42,27 @@
     var $cboCategoriaModal = $('#cboCategoriaModal');
     var $btnBuscarModal = $('#btnBuscarModal');
 
+    var $tblListadoProductosSeleccionados = $('#tblListadoProductosSeleccionados');
+    var $tblListadoProductosVendidos = $('#tblListadoProductosVendidos');
+    
     var $btnGenerarExcel = $('#btnGenerarExcel');
     var $txtFechaDesde = $('#txtFechaDesde');
-    var $txtFechaHasta = $('#txtFechaHasta'); 
+    var $txtFechaHasta = $('#txtFechaHasta');
 
+    var $agregarProducto = $('#agregarProducto'); 
+    
     var Message = {
         ObtenerTipoBusqueda: "Obteniendo los tipos de busqueda, Por favor espere...",
         GuardarSuccess: "Los datos se guardaron satisfactoriamente",
         EliminarSuccess: "El registro se elimino satisfactoriamente"
     };
 
-    var Global = {
-        Producto_Id: 0,
-        Producto_Nombre: null,
-        Producto_Cantidad: 0,
-        Producto_Precio: 0.0,
-        Producto_Precio_Mayor: 0.0,
-        Producto_Tipo: 0,
-        Producto_Cantidad_Gramo: 0,
-        Producto_Cantidad_Kilo: 0
-    };
+    var NuevosDatosSeleccionados = [];
+    var DatosSeleccionados = [];
+    var DatosSeleccionadosDetalle = { Data: [] };
+
+    var Global = null;  
+    var TotalVenta = 0;
 
     // Constructor
     $(Initialize);
@@ -74,13 +77,13 @@
         $btnBuscar.click($btnBuscar_click);
         $btnNuevaVenta.click($btnNuevaVenta_click);
         $btnProducto.click($btnProducto_click);
+        $btnAgregarProducto.click($btnAgregarProducto_click);
         $btnSaveProducto.click($btnSaveProducto_click);
         $btnSaveVenta.click($btnSaveVenta_click);
         $btnBuscarModal.click($btnBuscarModal_click);
-        $cboModalTipoVenta.change($cboModalTipoVenta_change)
-        $txtModalPrecioVenta.blur($txtModalPrecioVenta_keypress);
+        $cboModalTipoVenta.change($cboModalTipoVenta_change);
         $txtModalCantidad.blur($txtModalPrecioVenta_keypress);
-        app.Event.ForceDecimalOnly($txtModalPrecioVenta);
+        $txtModalDescuento.blur($txtModalPrecioVenta_keypress);
         app.Event.Number($txtModalCantidad);
         $btnGenerarExcel.click($btnGenerarExcel_click);
         $txtFechaDesde.change(ValidarGenerarExcel);
@@ -139,7 +142,6 @@
             { data: "TipoPago.TipoPago_Nombre" },
             { data: "Venta_Cantidad" },
             { data: "Producto.Producto_Precio" },
-            { data: "Venta_Precio" },
             { data: "Venta_Descuento" },
             { data: "Venta_Precio_Total" },
             { data: "Fecha" },
@@ -148,20 +150,20 @@
         var columnDefs = [
 
             {
-                "targets": [4, 5, 6, 7],
+                "targets": [4, 5, 6],
                 "className": "text-right",
                 'render': function (data, type, full, meta) {
                     return '' + app.FormatNumber(data) + '';
                 }
             },
             {
-                "targets": [8],
+                "targets": [7],
                 'render': function (data, type, full, meta) {
                     return '' + app.ConvertIntToDatetimeDT(data) + '';
                 }
             },
             {
-                "targets": [9],
+                "targets": [8],
                 "visible": true,
                 "orderable": false,
                 "className": "text-center",
@@ -236,32 +238,53 @@
         $modalVentas.modal();
         $formModal[0].reset();
         app.Event.SetDateDatepicket($txtModalFecha);
-        $cboModalTipoVenta.html("");
-        $cboModalTipoVenta.append("<option value=0>Todos</option>");
+        LimpiarAgregarProducto();
+        DatosSeleccionados = [];
+        NuevosDatosSeleccionados = [];                
+        DatosSeleccionadosDetalle = { Data: [] };
+        LoadProductosSeleccionados(DatosSeleccionados);
+        LoadProductosVendidos(DatosSeleccionadosDetalle);
+        $agregarProducto.hide();
     }
 
-    function $btnSaveVenta_click() {
+    function $btnSaveVenta_click() {           
 
-        var total = app.UnformatNumber($txtModalPrecioVenta.val());
+        if (DatosSeleccionadosDetalle.Data.length > 0) {
 
-        if (total > 0) {
-            InsertUpdateVenta();
-        } else if (total === 0 || total === "") {
-            app.Message.Info("Aviso", "Ingrese un precio de venta.", null, null);
+            var cant_productos = parseInt(0);
+            var flag = false;
+            $.each(DatosSeleccionados, function (key, value) {
+                $.each(DatosSeleccionadosDetalle.Data, function (key, valueD) {
+                    if (value.Producto_Id === valueD.Producto.Producto_Id) {
+                        cant_productos = cant_productos + parseInt(valueD.Venta_Cantidad);
+                    }                                                                                       
+                });
+
+                if (cant_productos <= $txtModalCantidadMaxima.val()) {
+                    flag = true;
+                }
+            });                 
+
+            if (flag) {
+                InsertUpdateVenta();
+            } else {
+                app.Message.Info("Aviso", "La cantidad de productos debe ser menor a la cantidad maxima.", null, null);
+            }                                 
         }
-
+        else
+        {
+            app.Message.Info("Aviso", "Agregar nuevos productos.", null, null);
+        }
     }
 
     function InsertUpdateVenta() {
+        var ProductosSeleccionados = [];
+        DatosSeleccionadosDetalle.Data.map(function (v, i) {
+            ProductosSeleccionados.push(v);
+        }); 
 
         var obj = {
-            "Producto": { "Producto_Id": Global.Producto_Id },
-            "Venta_Cantidad": $txtModalCantidad.val(),
-            "Venta_Precio": app.UnformatNumber($txtModalPrecioVenta.val()),
-            "Venta_Descuento": app.UnformatNumber($txtModalDescuento.val()),
-            "Venta_Precio_Total": app.UnformatNumber($txtModalTotal.val()),
-            "TipoVenta": { "TipoVenta_Id": $cboModalTipoVenta.val() },
-            "TipoPago": { "TipoPago_Id": $cboModalTipoPago.val() }
+            "productosSeleccionados": ProductosSeleccionados
         };
 
         var method = "POST";
@@ -278,7 +301,8 @@
 
     function $btnProducto_click() {
         $modalProducto.modal();
-        $cboTipoBusquedaModal.val(0).change();
+        $cboTipoBusquedaModal.val(0).change();        
+        NuevosDatosSeleccionados = [];
         LoadProductos();
     }
 
@@ -289,7 +313,7 @@
             Categoria: { Categoria_Id: $cboCategoriaModal.val() },
             Producto_Nombre: $txtDescripcionModal.val().trim()
         };
-        var columns = [
+        var columns = [         
             { data: "Categoria.Categoria_Nombre" },
             { data: "Producto_Nombre" },
             { data: "Producto_Cantidad" },
@@ -313,79 +337,82 @@
 
     function $btnSaveProducto_click() {
 
-        var DatosSeleccionados = $tblListadoProductos.DataTable().rows({ selected: true }).data().toArray();
-        var Producto = DatosSeleccionados[0];
+        NuevosDatosSeleccionados = $tblListadoProductos.DataTable().rows({ selected: true }).data().toArray();
 
-        Global = {
-            Producto_Id: Producto.Producto_Id,
-            Producto_Nombre: Producto.Producto_Nombre,
-            Producto_Cantidad: Producto.Producto_Cantidad,
-            Producto_Precio: Producto.Producto_Precio,
-            Producto_Precio_Mayor: Producto.Producto_Precio_Mayor,
-            Producto_Tipo: Producto.Producto_Tipo,
-            Producto_Cantidad_Gramo: Producto.Producto_Cantidad_Gramo,
-            Producto_Cantidad_Kilo: Producto.Producto_Cantidad_Kilo
-       };
-
-       $txtModalDescripcion.val(Global.Producto_Nombre);
-       $modalProducto.modal('hide');
-       GetTípoVenta();
+        $.each(NuevosDatosSeleccionados, function (key, valueDS) {
+            $.each(DatosSeleccionados, function (key, valueNDS) {
+                if (valueNDS.Producto_Id != valueDS.Producto_Id) {
+                    NuevosDatosSeleccionados.push(valueNDS);
+                }
+            });
+        });
+        $tblListadoProductosSeleccionados.DataTable().clear().draw();
+        LoadProductosSeleccionados(NuevosDatosSeleccionados);
+        EventoSeleccionProducto();
+        $modalProducto.modal('hide');
+        DatosSeleccionados.push(NuevosDatosSeleccionados[0]);        
     }
 
     function GetTípoVenta() {
-        $cboModalTipoVenta.html("");
-        $cboModalTipoVenta.append("<option value=0>Todos</option>");
+        LimpiarTipoVenta();
         $cboModalTipoVenta.append("<option value=1>Mayor</option>");
         $cboModalTipoVenta.append("<option value=2>Menor</option>");
         if (Global.Producto_Tipo == 1) {
             $cboModalTipoVenta.append("<option value=3>Granel</option>");
-        }     
+        }                       
+    }
+
+    function LimpiarTipoVenta() {
+        $cboModalTipoVenta.html("");
+        $cboModalTipoVenta.append("<option value=0>Todos</option>");
     }
 
     function $cboModalTipoVenta_change() {
-        $txtModalPrecioVenta.val("");
-        $txtModalCantidad.val("");
+        LimpiarAgregarProducto();
         var tipoVenta = $cboModalTipoVenta.val();
-        if (Global.Producto_Nombre != null) {
 
-            if (tipoVenta == 1 || tipoVenta == 2) {
-                $txtModalCantidadMaxima.val(Global.Producto_Cantidad);
-            } else if (tipoVenta == 3) {
-                $txtModalCantidadMaxima.val(Global.Producto_Cantidad_Gramo);
-            }
-
-            if (tipoVenta == 1) {
-                $txtModalPrecioProducto.val(Global.Producto_Precio_Mayor);
-            } else if (tipoVenta == 2) {
-                $txtModalPrecioProducto.val(Global.Producto_Precio);
-            } else if (tipoVenta == 3) {
-                $txtModalPrecioProducto.val(parseFloat(Global.Producto_Precio / Global.Producto_Cantidad_Kilo).toFixed(2));
-            } else {
-                $txtModalPrecioProducto.val("");
-            }
-
-            $txtModalPrecioVenta_keypress();
+        if (tipoVenta == 1 || tipoVenta == 2) {
+            $txtModalCantidadMaxima.val(Global.Producto_Cantidad);
+        } else if (tipoVenta == 3) {
+            $txtModalCantidadMaxima.val(Global.Producto_Cantidad_Gramo);
         }
+
+        if (tipoVenta == 1) {
+            $txtModalPrecioProducto.val(app.FormatNumber(Global.Producto_Precio_Mayor));
+        } else if (tipoVenta == 2) {
+            $txtModalPrecioProducto.val(app.FormatNumber(Global.Producto_Precio));
+        } else if (tipoVenta == 3) {
+            $txtModalPrecioProducto.val(app.FormatNumber(parseFloat(
+                Global.Producto_Precio / Global.Producto_Cantidad_Kilo).toFixed(2)));
+        } else {
+            $txtModalPrecioProducto.val("");
+        }
+
+        $txtModalPrecioVenta_keypress();
     }
 
     function $txtModalPrecioVenta_keypress() {
         var PrecioProducto = parseFloat(app.UnformatNumber($txtModalPrecioProducto.val()));
-        var PrecioVenta = parseFloat(app.UnformatNumber($txtModalPrecioVenta.val()));
         var Cantidad = parseInt($txtModalCantidad.val());
+        var Descuento = parseFloat(app.UnformatNumber($txtModalDescuento.val()));
 
         if ($cboModalTipoVenta.val() == 3) {
             Cantidad = parseFloat(Cantidad / 1000)    
         }
 
-        if (PrecioVenta > 0) {
-            if (PrecioProducto >= PrecioVenta) {
-                var Descuento = app.FormatNumber((PrecioProducto - PrecioVenta) * Cantidad);
-                $txtModalDescuento.val(Descuento);
-                var Total = app.FormatNumber(PrecioVenta * Cantidad);
-                $txtModalTotal.val(Total);
+        if (isNaN(Descuento)) {
+            Descuento = 0
+        }
+
+        if (Cantidad > 0) {
+            if (PrecioProducto > Descuento) {
+                var PrecioVenta = app.FormatNumber(PrecioProducto - Descuento);
+                $txtModalPrecioVenta.val(PrecioVenta)
+                var Total = app.FormatNumber((PrecioProducto - Descuento) * Cantidad);
+                $txtModalTotal.val(Total);     
             } else {
-                app.Message.Info("ERROR", "El precio del producto no puede ser mayor al  de venta", null, null);
-                $txtModalPrecioVenta.val("");
+                app.Message.Info("ERROR", "El precio del producto no puede ser menor al descuento", null, null);
+                $txtModalDescuento.val("");
             }
         }
     }
@@ -451,10 +478,268 @@
         if (FechaDesde > FechaHasta) {
             $txtFechaDesde.val("");
         }
+    }       
+
+    function EliminarProductoSeleccionado(row) {
+
+        var data = app.GetValueRowCellOfDataTable($tblListadoProductosSeleccionados, row);
+        var ProductosSeleccionadas = [];
+        var fnAceptarCallback = function () {
+
+            DatosSeleccionados.map(function (v, i) {
+                ProductosSeleccionadas.push(v);
+            });
+
+            var index = $.inArray(data, DatosSeleccionados);
+            ProductosSeleccionadas.splice(index, 1);
+
+            DatosSeleccionados = [];
+            $.each(ProductosSeleccionadas, function (index, value) {
+                DatosSeleccionados.push(value);
+            });
+
+            LimpiarAgregarProducto();
+            LoadProductosSeleccionados(DatosSeleccionados);
+            EventoSeleccionProducto();  
+
+            var cant_productos = parseInt(0);
+            var ProductosVendidos = [];
+            DatosSeleccionadosDetalle.Data.map(function (v, i) {
+                if (v.Producto.Producto_Id == data.Producto_Id) {
+                    cant_productos++;
+                }
+                ProductosVendidos.push(v);
+            });
+
+            for (var i = 0; i < cant_productos; i++) {
+                $.each(ProductosVendidos, function (i, item) {
+                    if (item.Producto.Producto_Id == data.Producto_Id) {
+                        ProductosVendidos.splice(i, 1);
+                        return false;
+                    }
+                });
+            }
+
+            DatosSeleccionadosDetalle = { Data: [] };
+            $.each(ProductosVendidos, function (index, value) {
+                DatosSeleccionadosDetalle.Data.push(value);
+            });
+            LoadProductosVendidos(DatosSeleccionadosDetalle);
+        };
+
+        var cant_detalle = parseInt(0);
+        $.each(DatosSeleccionadosDetalle.Data, function (key, value) {
+            if (value.Producto.Producto_Id == data.Producto_Id) {
+                cant_detalle++;
+            }
+        });
+
+        if (cant_detalle > 0) {
+            app.Message.Confirm("Aviso", "Esta seguro que desea eliminar el producto, se eliminaran las tallas asociadas?", "Aceptar", "Cancelar", fnAceptarCallback, null);
+            return false;
+        }
+        else {
+
+            DatosSeleccionados.map(function (v, i) {
+                ProductosSeleccionadas.push(v);
+            });
+
+            var index = $.inArray(data, DatosSeleccionados);
+            ProductosSeleccionadas.splice(index, 1);
+
+            DatosSeleccionados = [];
+            $.each(ProductosSeleccionadas, function (index, value) {
+                DatosSeleccionados.push(value);
+            });
+
+            LoadProductosSeleccionados(DatosSeleccionados);
+            EventoSeleccionProducto();
+        }
+    }
+
+    function LoadProductosSeleccionados(data) {
+        $tblListadoProductosSeleccionados.DataTable({
+            data: data,
+            columns: [
+                { data: "Categoria.Categoria_Nombre" },
+                { data: "Producto_Nombre" },
+                { data: "Producto_Cantidad" },
+                { data: "Producto_Precio" },
+                { data: "Producto_Precio_Mayor" },
+                { data: "Producto_Id" }
+            ],
+            columnDefs: [
+                {
+                    "targets": [3,4],
+                    'render': function (data, type, full, meta) {
+                        return '' + app.FormatNumber(data) + '';
+                    }
+                },
+                {
+                    "targets": [5],
+                    "visible": true,
+                    "className": "text-center",
+                    'render': function (data, type, full, meta) {
+                        return "<center>" +
+                            '<a class="btn btn-default btn-xs"  title="Eliminar" href="javascript:Ventas.EliminarProductoSeleccionado(' + meta.row + ')"><i class="fa fa-trash" aria-hidden="true"></i></a>' +
+                            "</center> ";
+                    }
+                }
+            ],
+            destroy: true,
+            paging: true,
+            searching: false,
+            pageLength: 5,
+            ordering: false,
+            lengthMenu: false,
+            lengthChange: false,
+            select: {
+                style: "single",
+            },
+            language: app.Defaults.DataTableLanguage
+        });
+    }
+
+    function EventoSeleccionProducto() {
+        var table = $tblListadoProductosSeleccionados.DataTable();
+
+        table.on('select', function (e, dt, type, indexes) {
+            var row = table.rows(indexes).data().toArray();
+            if (row.length > 0) {
+                var Producto = row[0];
+                Global = Producto; 
+                $txtModalDescripcion.val(Global.Producto_Nombre);
+                $txtModalCantidadMaxima.val(Global.Producto_Cantidad);
+                GetTípoVenta();
+                $agregarProducto.show()
+            }
+        }).on('deselect', function (e, dt, type, indexes) {
+            var row = table.rows(indexes).data().toArray();
+            LimpiarTipoVenta();
+            LimpiarAgregarProducto();
+            $txtModalCantidadMaxima.val("");
+            $txtModalPrecioProducto.val("");
+            $agregarProducto.hide();
+            Global = null;
+        });
+    }
+
+    function $btnAgregarProducto_click() {
+        if (ValidarAgregarProducto()) {
+            var obj = {
+                "Producto": {
+                    "Producto_Id": Global.Producto_Id,
+                    "Categoria_Nombre": Global.Categoria.Categoria_Nombre,
+                    "Producto_Nombre": Global.Producto_Nombre,
+                    "Producto_Precio": app.UnformatNumber($txtModalPrecioProducto.val())
+                },
+                "Venta_Cantidad": app.UnformatNumber($txtModalCantidad.val()),
+                "Venta_Precio": app.UnformatNumber($txtModalPrecioVenta.val()),
+                "Venta_Descuento": app.FormatNumber($txtModalDescuento.val()),
+                "Venta_Precio_Total": app.UnformatNumber($txtModalTotal.val()),
+                "TipoVenta": {
+                    "TipoVenta_Id": $cboModalTipoVenta.val(),
+                },
+                "TipoPago": {
+                    "TipoPago_Id": $cboModalTipoPago.val()
+                }
+            };
+
+            DatosSeleccionadosDetalle.Data.push(obj);
+
+            TotalVenta = TotalVenta + parseFloat(app.UnformatNumber($txtModalTotal.val()));
+            $txtModalTotalFinal.val(app.FormatNumber(TotalVenta));
+
+            LoadProductosVendidos(DatosSeleccionadosDetalle);
+            LimpiarAgregarProducto();
+        }                             
+    }
+
+    function LoadProductosVendidos(DatosSeleccionadosDetalle) {
+        var columns = [
+            { data: "Producto.Categoria_Nombre" },
+            { data: "Producto.Producto_Nombre" },
+            { data: "Venta_Cantidad" },
+            { data: "Producto.Producto_Precio" },
+            { data: "Venta_Descuento" },
+            { data: "Venta_Precio" },
+            { data: "Venta_Precio_Total" },
+            { data: "Producto.Producto_Id" }
+        ];
+        var columnDefs = [
+            {
+                "targets": [7],
+                "visible": true,
+                "className": "text-center",
+                'render': function (data, type, full, meta) {
+                    return "<center>" +
+                        '<a class="btn btn-default btn-xs"  title="Eliminar" href="javascript:Ventas.EliminarProductosVendidos(' + meta.row + ')"><i class="fa fa-trash" aria-hidden="true"></i></a>' +
+                        "</center> ";
+                }
+            }
+        ];
+
+        var filtros = {
+            pageLength: 5
+        };
+
+        app.FillDataTable($tblListadoProductosVendidos, DatosSeleccionadosDetalle, columns, columnDefs, "#tblListadoProductosVendidos", filtros, null, null, null, null, true);
+    }
+
+    function EliminarProductosVendidos(row) {
+        var data = app.GetValueRowCellOfDataTable($tblListadoProductosVendidos, row);
+
+        TotalVenta = TotalVenta - parseFloat(app.UnformatNumber(data.Total));
+        $txtModalTotalFinal.val(app.FormatNumber(TotalVenta)); 
+
+        var ProductosVendidos = [];
+        DatosSeleccionadosDetalle.Data.map(function (v, i) {
+            ProductosVendidos.push(v);
+        });
+
+        $.each(ProductosVendidos, function (i, item) {
+            if (item.Producto_Id === data.Producto_Id) {
+                ProductosVendidos.splice(i, 1);
+                return false;
+            }
+        });
+
+        DatosSeleccionadosDetalle = { Data: [] };
+        $.each(ProductosVendidos, function (index, value) {
+            DatosSeleccionadosDetalle.Data.push(value);
+        });
+
+        LoadProductosVendidos(DatosSeleccionadosDetalle);
+    }
+
+    function ValidarAgregarProducto() {
+        var flag = true;
+        var br = "<br>";
+        var msg = "";
+        msg += app.ValidarCampo($cboModalTipoPago.val(), "• El Tipo de Pago.");
+        msg += app.ValidarCampo($cboModalTipoVenta.val(), "• El Tipo de Venta.");
+        msg += app.ValidarCampo($txtModalCantidad.val(), "• La Cantidad.");
+
+        if (msg !== "") {
+            flag = false;
+            var msgTotal = "Por favor, Ingrese los siguientes campos de venta: " + br + msg;
+            app.Message.Info("Aviso", msgTotal);
+        }
+
+        return flag;
+    }
+
+    function LimpiarAgregarProducto() {
+        $cboModalTipoPago.val(0);
+        $txtModalCantidad.val("");
+        $txtModalDescuento.val("");
+        $txtModalTotal.val("");
     }
 
     return {
-        EliminarVenta: EliminarVenta
+        EliminarVenta: EliminarVenta,
+        EliminarProductoSeleccionado: EliminarProductoSeleccionado,
+        EliminarProductosVendidos: EliminarProductosVendidos
     };
 
 

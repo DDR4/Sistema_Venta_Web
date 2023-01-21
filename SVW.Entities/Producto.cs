@@ -18,6 +18,7 @@ namespace SVW.Entities
         public int Producto_Cantidad_Gramo { get; set; }
         public int Producto_Cantidad_Kilo { get; set; }
         public int Producto_Tipo { get; set; }
+        public Imagen Imagen { get; set; }
         public Categoria Categoria { get; set; }
         public int Producto_Estado { get; set; }
         public Operacion Operacion { get; set; }

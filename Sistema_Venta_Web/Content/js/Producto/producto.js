@@ -28,6 +28,7 @@
     var $txtModalCantidad = $('#txtModalCantidad');
     var $txtModalKilos = $('#txtModalKilos');
     var $cboModalEstado = $('#cboModalEstado');
+    var $txtModalImagen = $('#txtModalImagen');
 
     var $btnSaveProducto = $('#btnSaveProducto');
 
@@ -43,7 +44,8 @@
     };
 
     var Global = {
-        Producto_Id: null
+        Producto_Id: null,
+        ImgBase64: null
     };
 
     // Constructor
@@ -88,8 +90,18 @@
             else if (this.value == 2) {
                 $divKilos.hide();
             }
-        });                   
+        });    
 
+        $('input[type=file]').change(function () { 
+            var input = event.target;
+
+            var reader = new FileReader();
+            reader.addEventListener("load", function () {
+                Global.ImgBase64 = reader.result;
+            }, false);  
+
+            reader.readAsDataURL(input.files[0]);
+        });           
     }
 
     function $cboTipoBusqueda_change() {
@@ -132,7 +144,9 @@
 
     function $btnSaveProducto_click() {
         if (Validar()) {
-            InsertUpdateProducto();
+            if (ValidarFormatoImagen()) {
+                InsertUpdateProducto();
+            }                          
         }
     }
 
@@ -151,13 +165,35 @@
         if (rbsaco == 1) {
             msg += app.ValidarCampo($txtModalKilos.val(), "• Los Kilos.");
         }
-        msg += app.ValidarCampo($cboModalEstado.val(), "• El Estado.");                 
+        msg += app.ValidarCampo($cboModalEstado.val(), "• El Estado.");
+        msg += app.ValidarCampo($txtModalImagen.val(), "• La Imagen.");
 
         if (msg !== "") {
             flag = false;
             var msgTotal = "Por favor, Ingrese los siguientes campos del producto: " + br + msg;
             app.Message.Info("Aviso", msgTotal);
         }
+
+        return flag;
+    }
+
+    function ValidarFormatoImagen() {
+        var flag = true;
+        var imagen = document.getElementById("txtModalImagen");
+        var tipoImagen = imagen.files[0].type;
+        var tamañoImagen = imagen.files[0].size;
+
+        if (tipoImagen !== "image/jpeg" && tipoImagen !== "image/png") {
+            app.Message.Info("Aviso", "Solo se pueden subir archivos .jpg, .jpeg y .png");
+            $txtModalImagen.val("");
+            flag = false;
+        } 
+
+        if (tamañoImagen > 1000000) {
+            app.Message.Info("Aviso", "Solo se pueden subir archivos menores a 1MB");
+            $txtModalImagen.val("");
+            flag = false;
+        }          
 
         return flag;
     }
@@ -200,6 +236,10 @@
 
     function InsertUpdateProducto() {
 
+        var imagen = document.getElementById("txtModalImagen");
+        var nombreImagen = imagen.files[0].name;
+        var tipoImagen = imagen.files[0].type;
+
         var obj = {
             "Producto_Id": Global.Producto_Id,
             "Producto_Codigo": $txtModalCodigo.val(),
@@ -211,6 +251,11 @@
             "Producto_Tipo": $('input[name=rbsaco]:checked').val(),
             "Producto_Cantidad_Kilo": $txtModalKilos.val(),
             "Producto_Estado": $cboModalEstado.val(),
+            "Imagen": {
+                "Imagen_Nombre": nombreImagen,
+                "Imagen_Tipo": tipoImagen,
+                "Imagen_ImgBase64": Global.ImgBase64
+            }
         };
         var method = "POST";
         var url = "Producto/InsertUpdateProducto";
@@ -240,10 +285,10 @@
             { data: "Producto_Precio" },
             { data: "Producto_Precio_Mayor" },
             { data: "Producto_Cantidad" },
+            { data: "Imagen.Imagen_ImgBase64" },
             { data: "Producto_Estado" },
             { data: "Producto_Fecha" },
             { data: "Auditoria.TipoUsuario" }
-
         ];
 
         var columnDefs = [  
@@ -257,6 +302,18 @@
                 "targets": [6],
                 "className": "text-center",
                 'render': function (data, type, full, meta) {
+                    if (data !== "") {
+                        return '<img src="'+ data + '"' +
+                               'width=60px height=50px />';
+                    } else return '<img width=60px height=50px />';
+
+                     
+                }
+            },
+            {
+                "targets": [7],
+                "className": "text-center",
+                'render': function (data, type, full, meta) {
                     if (data === 1) {
                         return "Activo";
                     } else return "Inactivo";
@@ -264,13 +321,13 @@
                 }
             },
             {
-                "targets": [7],
+                "targets": [8],
                 'render': function (data, type, full, meta) {
                     return '' + app.ConvertIntToDatetimeDT(data) + '';
                 }
             },
             {
-                "targets": [8],
+                "targets": [9],
                 "visible": true,
                 "orderable": false,
                 "className": "text-center",
@@ -328,6 +385,7 @@
         } else if (data.Producto_Tipo == 2) {
             $divKilos.hide();
         } 
+        $txtModalImagen.val(data.Imagen.Imagen_Nombre);
     }
 
     function EliminarProducto(row) {

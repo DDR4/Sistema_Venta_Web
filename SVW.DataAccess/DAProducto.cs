@@ -45,6 +45,12 @@ namespace SVW.DataAccess
                              Categoria_Id = n.Single(d => d.Key.Equals("Categoria_Id")).Value.Parse<int>(),
                              Categoria_Nombre = n.Single(d => d.Key.Equals("Categoria_Nombre")).Value.Parse<string>(),
                          },
+                         Imagen = new Imagen
+                         {
+                             Imagen_Nombre = n.Single(d => d.Key.Equals("Imagen_Nombre")).Value.Parse<string>(),
+                             Imagen_Tipo = n.Single(d => d.Key.Equals("Imagen_Tipo")).Value.Parse<string>(),
+                             Imagen_ImgBase64 = Convert.ToBase64String(n.Single(d => d.Key.Equals("Imagen_Binario")).Value.Parse<byte[]>())  
+                         },
                          Producto_Estado = n.Single(d => d.Key.Equals("Producto_Estado")).Value.Parse<int>(),
                          Auditoria = new Auditoria
                          {
@@ -98,6 +104,9 @@ namespace SVW.DataAccess
                 parm.Add("@Producto_Cantidad", obj.Producto_Cantidad);
                 parm.Add("@Producto_Cantidad_Kilo", obj.Producto_Cantidad_Kilo);
                 parm.Add("@Producto_Tipo", obj.Producto_Tipo);
+                parm.Add("@Imagen_Nombre", obj.Imagen.Imagen_Nombre);
+                parm.Add("@Imagen_Tipo", obj.Imagen.Imagen_Tipo);
+                parm.Add("@Imagen_Binario", Convert.FromBase64String(obj.Imagen.Imagen_ImgBase64));
                 parm.Add("@Usuario", obj.Auditoria.UsuarioCreacion);
                 parm.Add("@Estado", obj.Producto_Estado);
                 var result = connection.Execute(

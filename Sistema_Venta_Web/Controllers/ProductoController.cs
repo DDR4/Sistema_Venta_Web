@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Xml.Linq;
 
@@ -83,6 +84,14 @@ namespace Sistema_Venta_Web.Controllers
             {
                 UsuarioCreacion = User.Identity.Name,
                 UsuarioModificacion = User.Identity.Name
+            };
+
+            obj.Imagen = new Imagen
+            {
+                Imagen_Nombre = obj.Imagen.Imagen_Nombre,
+                Imagen_Tipo = obj.Imagen.Imagen_Tipo,
+                Imagen_ImgBase64 = obj.Imagen.Imagen_ImgBase64.Replace("data:"+
+                obj.Imagen.Imagen_Tipo +";base64,", "")
             };
 
             var response = bussingLogic.InsertUpdateProducto(obj);
